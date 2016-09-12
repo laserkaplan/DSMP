@@ -16,6 +16,8 @@ class DSMP_DAODtoMT : public xAH::Algorithm {
         virtual EL::StatusCode execute();
         virtual EL::StatusCode histFinalize();
 
+        bool m_saveJets;
+        bool m_saveFatJets;
         std::string m_jetContainerName;
         std::string m_fatJetContainerName;
         std::string m_eventInfoDetailStr;

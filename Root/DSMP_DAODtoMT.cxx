@@ -19,6 +19,8 @@
 ClassImp(DSMP_DAODtoMT)
 
 DSMP_DAODtoMT::DSMP_DAODtoMT() {
+    m_saveJets = true;
+    m_saveFatJets = true;
     m_jetContainerName = "";
     m_fatJetContainerName = "";
     m_eventInfoDetailStr = "";
@@ -52,8 +54,8 @@ EL::StatusCode DSMP_DAODtoMT::initialize() {
     
     m_tree = new DSMP_Minitree(m_event, outTree, treeFile);
     m_tree->AddEvent(m_eventInfoDetailStr);
-    m_tree->AddJets(m_jetDetailStr);
-    m_tree->AddFatJets(m_fatJetDetailStr);
+    if (m_saveJets) m_tree->AddJets(m_jetDetailStr);
+    if (m_saveFatJets) m_tree->AddFatJets(m_fatJetDetailStr);
 
     return EL::StatusCode::SUCCESS;
 }
@@ -77,16 +79,20 @@ EL::StatusCode DSMP_DAODtoMT::execute() {
 
     // get jets
     const xAOD::JetContainer *jets = 0;
-    RETURN_CHECK("DSMP_DAODtoMT::execute()", HelperFunctions::retrieve(jets, m_jetContainerName, m_event, m_store), "");
+    if (m_saveJets) RETURN_CHECK("DSMP_DAODtoMT::execute()", HelperFunctions::retrieve(jets, m_jetContainerName, m_event, m_store), "");
     
     // get fat jets
     const xAOD::JetContainer *fatJets = 0;
-    RETURN_CHECK("DSMP_DAODtoMT::execute()", HelperFunctions::retrieve(fatJets, m_fatJetContainerName, m_event, m_store), "");
+    if (m_saveFatJetS) RETURN_CHECK("DSMP_DAODtoMT::execute()", HelperFunctions::retrieve(fatJets, m_fatJetContainerName, m_event, m_store), "");
+
+    // require at least 2 small R jets or at least 2 large R jets
+    if (!(m_saveJets && jets->size() >= 2)) return EL::StatusCode::SUCCESS;
+    if (!(m_saveFatJets && fatJets->size() >= 2)) return EL::StatusCode::SUCCESS;
 
     // fill tree branches
     m_tree->FillEvent(eventInfo, m_event);
-    m_tree->FillJets(jets);
-    m_tree->FillFatJets(fatJets);
+    if (m_saveJets) m_tree->FillJets(jets);
+    if (m_saveFatJets) m_tree->FillFatJets(fatJets, "signal");
     m_tree->Fill();
 
     return EL::StatusCode::SUCCESS;
