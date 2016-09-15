@@ -4,7 +4,7 @@
 #include <xAODAnaHelpers/Algorithm.h>
 #include <xAODAnaHelpers/tools/ReturnCheck.h>
 
-#include <DSMP/DSMP_Minitree.h>
+#include <DSMP/DSMP_MiniTree.h>
 
 class DSMP_DAODtoMT : public xAH::Algorithm {
     public:
@@ -24,7 +24,7 @@ class DSMP_DAODtoMT : public xAH::Algorithm {
         std::string m_jetDetailStr;
         std::string m_fatJetDetailStr;
 
-        DSMP_Minitree *m_tree; //!
+        DSMP_MiniTree *m_tree; //!
         
         ClassDef(DSMP_DAODtoMT, 1);
 };

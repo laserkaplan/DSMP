@@ -32,7 +32,7 @@ EL::StatusCode DSMP_DAODtoMT::setupJob(EL::Job& job) {
     job.useXAOD();
     xAOD::Init("DSMP_DAODtoMT").ignore();
 
-    EL::OutputStream outTree("Minitree");
+    EL::OutputStream outTree("MiniTree");
     job.outputAdd(outTree);
 
     return EL::StatusCode::SUCCESS;
@@ -45,14 +45,19 @@ EL::StatusCode DSMP_DAODtoMT::histInitialize () {
 }
 
 EL::StatusCode DSMP_DAODtoMT::initialize() {
+    if ((!m_saveJets && !m_saveFatJets) || (m_saveJets && m_saveFatJets)) {
+        std::cout << "Must require only one of m_saveJets or m_saveFatJets!" << std::endl;
+        return EL::StatusCode::FAILURE;
+    }
+
     m_event = wk()->xaodEvent();
     m_store = wk()->xaodStore();
 
     TTree *outTree = new TTree("tree", "tree");
-    TFile *treeFile = wk()->getOutputFile("Minitree");
+    TFile *treeFile = wk()->getOutputFile("MiniTree");
     outTree->SetDirectory(treeFile);
     
-    m_tree = new DSMP_Minitree(m_event, outTree, treeFile);
+    m_tree = new DSMP_MiniTree(m_event, outTree, treeFile);
     m_tree->AddEvent(m_eventInfoDetailStr);
     if (m_saveJets) m_tree->AddJets(m_jetDetailStr);
     if (m_saveFatJets) m_tree->AddFatJets(m_fatJetDetailStr);
@@ -83,16 +88,12 @@ EL::StatusCode DSMP_DAODtoMT::execute() {
     
     // get fat jets
     const xAOD::JetContainer *fatJets = 0;
-    if (m_saveFatJetS) RETURN_CHECK("DSMP_DAODtoMT::execute()", HelperFunctions::retrieve(fatJets, m_fatJetContainerName, m_event, m_store), "");
-
-    // require at least 2 small R jets or at least 2 large R jets
-    if (!(m_saveJets && jets->size() >= 2)) return EL::StatusCode::SUCCESS;
-    if (!(m_saveFatJets && fatJets->size() >= 2)) return EL::StatusCode::SUCCESS;
+    if (m_saveFatJets) RETURN_CHECK("DSMP_DAODtoMT::execute()", HelperFunctions::retrieve(fatJets, m_fatJetContainerName, m_event, m_store), "");
 
     // fill tree branches
     m_tree->FillEvent(eventInfo, m_event);
     if (m_saveJets) m_tree->FillJets(jets);
-    if (m_saveFatJets) m_tree->FillFatJets(fatJets, "signal");
+    if (m_saveFatJets) m_tree->FillFatJets(fatJets);
     m_tree->Fill();
 
     return EL::StatusCode::SUCCESS;
@@ -104,7 +105,7 @@ EL::StatusCode DSMP_DAODtoMT::histFinalize() {
     // copy metadata to output minitree
     TFile *fileMD = wk()->getOutputFile("metadata");
     TH1D *histEventCount = (TH1D*) fileMD->Get("MetaData_EventCount");
-    TFile *treeFile = wk()->getOutputFile("Minitree");
+    TFile *treeFile = wk()->getOutputFile("MiniTree");
     TH1F *thisHistEventCount = (TH1F*) histEventCount->Clone("MetaData");
     thisHistEventCount->SetDirectory(treeFile);
 

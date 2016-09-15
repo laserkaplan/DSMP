@@ -73,8 +73,9 @@ if saveJets:
                               "m_decorateSelectedObjects" : False,
                               "m_createSelectedContainer" : True,
                               "m_cleanJets"               : True,
-                              "m_pT_min"                  : 200e3,
+                              "m_pT_min"                  : 500e3,
                               "m_eta_max"                 : 2.4,
+                              "m_pass_min"                : 2,
                               "m_useCutFlow"              : True,
                             } )
 
@@ -110,8 +111,9 @@ if saveFatJets:
                               "m_decorateSelectedObjects" : False,
                               "m_createSelectedContainer" : True,  
                               "m_cleanJets"               : True,
-                              "m_pT_min"                  : 200e3,
+                              "m_pT_min"                  : 500e3,
                               "m_eta_max"                 : 2.0,
+                              "m_pass_min"                : 2,
                               "m_useCutFlow"              : True,
                             } )
 
@@ -122,5 +124,5 @@ c.setalg("DSMP_DAODtoMT", { "m_name"                 : "DSMP_DAODtoMT",
                             "m_fatJetContainerName"  : "SelFatJets",
                             "m_eventInfoDetailStr"   : "pileup",
                             "m_jetDetailStr"         : "kinematic",
-                            "m_fatJetDetailStr"      : "kinematic substructure"
+                            "m_fatJetDetailStr"      : "kinematic"
                           } )

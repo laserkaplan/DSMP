@@ -1,11 +1,11 @@
-#ifndef DSMP_Minitree_H
-#define DSMP_Minitree_H
+#ifndef DSMP_MiniTree_H
+#define DSMP_MiniTree_H
 
 #include "xAODAnaHelpers/HelpTreeBase.h"
 
 #include "xAODEventInfo/EventInfo.h"
 
-class DSMP_Minitree : public HelpTreeBase {
+class DSMP_MiniTree : public HelpTreeBase {
     private:
         float m_weight;
         std::vector<float> m_jet_tam;
@@ -14,18 +14,18 @@ class DSMP_Minitree : public HelpTreeBase {
         std::vector<float> m_fatjet_tam_cal;
 
     public:
-        DSMP_Minitree(xAOD::TEvent *event, TTree *tree, TFile *file);
-        ~DSMP_Minitree();
+        DSMP_MiniTree(xAOD::TEvent *event, TTree *tree, TFile *file);
+        ~DSMP_MiniTree();
 
         void AddEventUser(const std::string detailStr = "");
         void AddJetsUser(const std::string detailStr = "", const std::string jetName = "jet");
-        void AddFatJetsUser(const std::string detailStr = "");
+        void AddFatJetsUser(const std::string &, const std::string &, const std::string &);
         void FillEventUser(const xAOD::EventInfo *eventInfo);
         void FillJetsUser(const xAOD::Jet *jet, const std::string jetName = "jet");
-        void FillFatJetsUser(const xAOD::Jet *fatjet);
+        void FillFatJetsUser(const xAOD::Jet *fatjet, const std::string &, const std::string &);
         void ClearEventUser();
         void ClearJetsUser(const std::string jetName = "jet");
-        void ClearFatJetsUser();
+        void ClearFatJetsUser(const std::string &, const std::string &);
 };
 
 #endif
