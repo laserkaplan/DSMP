@@ -24,6 +24,7 @@ DSMP_DAODtoMT::DSMP_DAODtoMT() {
     m_jetContainerName = "";
     m_fatJetContainerName = "";
     m_eventInfoDetailStr = "";
+    m_trigDetailStr = "";
     m_jetDetailStr = "";
     m_fatJetDetailStr = "";
 }
@@ -59,6 +60,7 @@ EL::StatusCode DSMP_DAODtoMT::initialize() {
     
     m_tree = new DSMP_MiniTree(m_event, outTree, treeFile);
     m_tree->AddEvent(m_eventInfoDetailStr);
+    m_tree->AddTrigger(m_trigDetailStr);
     if (m_saveJets) m_tree->AddJets(m_jetDetailStr);
     if (m_saveFatJets) m_tree->AddFatJets(m_fatJetDetailStr);
 
@@ -92,6 +94,7 @@ EL::StatusCode DSMP_DAODtoMT::execute() {
 
     // fill tree branches
     m_tree->FillEvent(eventInfo, m_event);
+    m_tree->FillTrigger(eventInfo);
     if (m_saveJets) m_tree->FillJets(jets);
     if (m_saveFatJets) m_tree->FillFatJets(fatJets);
     m_tree->Fill();

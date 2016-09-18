@@ -123,6 +123,7 @@ c.setalg("DSMP_DAODtoMT", { "m_name"                 : "DSMP_DAODtoMT",
                             "m_jetContainerName"     : "SelJets",
                             "m_fatJetContainerName"  : "SelFatJets",
                             "m_eventInfoDetailStr"   : "pileup",
+                            "m_trigDetailStr"        : "passTriggers",
                             "m_jetDetailStr"         : "kinematic",
                             "m_fatJetDetailStr"      : "kinematic"
                           } )
