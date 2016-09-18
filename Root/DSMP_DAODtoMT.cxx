@@ -53,7 +53,7 @@ EL::StatusCode DSMP_DAODtoMT::initialize() {
     m_event = wk()->xaodEvent();
     m_store = wk()->xaodStore();
 
-    TTree *outTree = new TTree("tree", "tree");
+    TTree *outTree = new TTree("MiniTree", "MiniTree");
     TFile *treeFile = wk()->getOutputFile("MiniTree");
     outTree->SetDirectory(treeFile);
     
