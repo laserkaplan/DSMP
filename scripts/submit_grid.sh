@@ -17,10 +17,10 @@ then
 fi
 
 # data15
-./xAODAnaHelpers/scripts/xAH_run.py --config DSMP/scripts/config_DAODtoMT.py --files DSMP/etc/data15.EXOT8.list --inputList --inputDQ2 --submitDir ${SUFFIX}_data15 --force ${PRUN}
+./xAODAnaHelpers/scripts/xAH_run.py --config DSMP/scripts/config_DAODtoMT.py --files DSMP/etc/data15.EXOT8.list --inputList --inputDQ2 --submitDir ${SUFFIX}_data15 --force        ${PRUN}
 
 # data16
-./xAODAnaHelpers/scripts/xAH_run.py --config DSMP/scripts/config_DAODtoMT.py --files DSMP/etc/data16.EXOT8.list --inputList --inputDQ2 --submitDir ${SUFFIX}_data16 --force ${PRUN}
+./xAODAnaHelpers/scripts/xAH_run.py --config DSMP/scripts/config_DAODtoMT.py --files DSMP/etc/data16.EXOT8.list --inputList --inputDQ2 --submitDir ${SUFFIX}_data16 --force        ${PRUN}
 
 # jetjet
 ./xAODAnaHelpers/scripts/xAH_run.py --config DSMP/scripts/config_DAODtoMT.py --files DSMP/etc/jetjet.EXOT8.list --inputList --inputDQ2 --submitDir ${SUFFIX}_jetjet --force --isMC ${PRUN}
