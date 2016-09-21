@@ -10,6 +10,7 @@ GRLs = ','.join(GRLList)
 
 c.setalg("DSMP_MTtoTT", { "m_doJets"            : False,
                           "m_doFatJets"         : True,
+                          "m_mc"                : args.is_MC,
                           "m_applyFinalWeight"  : True,
                           "m_applyGRL"          : True,
                           "m_GRLs"              : GRLs,

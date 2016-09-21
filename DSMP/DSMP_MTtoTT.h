@@ -12,13 +12,20 @@
 
 enum DSMPCategory {
     _none,
-    _control,
+    _qq,
     _VV,
     _VH,
     _tV,
     _HH,
     _tH,
-    _tt
+    _tt,
+    _qV,
+    _qH,
+    _qt,
+    _QV,
+    _QH,
+    _Qt,
+    _QQ
 };
 
 class DSMP_MTtoTT : public xAH::Algorithm {
@@ -41,6 +48,7 @@ class DSMP_MTtoTT : public xAH::Algorithm {
         // options
         bool m_doJets;
         bool m_doFatJets;
+        bool m_mc;
         bool m_applyFinalWeight;
         bool m_applyGRL;
         std::string m_GRLs;

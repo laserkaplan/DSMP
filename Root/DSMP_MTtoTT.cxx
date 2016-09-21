@@ -20,6 +20,7 @@ DSMP_MTtoTT::DSMP_MTtoTT() {
     // options
     m_doJets = false;
     m_doFatJets = false;
+    m_mc = false;
     m_applyFinalWeight = false;
     m_applyGRL = false;
     m_GRLs = "";
@@ -52,7 +53,7 @@ EL::StatusCode DSMP_MTtoTT::initialize() {
     }
 
     // get sum of weights
-    if (m_isMC && m_applyFinalWeight) setSumOfWeights();
+    if (m_mc && m_applyFinalWeight) setSumOfWeights();
 
     // GRL tool
     if (m_applyGRL) {
@@ -111,7 +112,7 @@ EL::StatusCode DSMP_MTtoTT::execute() {
     // LASER - TODO: put in PRW
     
     // GRL
-    if (!m_isMC && m_applyGRL) {
+    if (!m_mc && m_applyGRL) {
         if (!m_GRLTool->passRunLB(in_runNumber, in_lumiblock)) {
             wk()->skipEvent();
             return EL::StatusCode::SUCCESS;
@@ -120,15 +121,15 @@ EL::StatusCode DSMP_MTtoTT::execute() {
 
     // trigger & categorization
     int runNumber = 0;
-    if (!m_isMC) runNumber = in_runNumber;
+    if (!m_mc) runNumber = in_runNumber;
     else {} // LASER - TODO: handle random run number for MC
-    bool b_passJetTrigger = passJetTrigger(runNumber);
-    if (!b_passJetTrigger) return EL::StatusCode::SUCCESS;
+//    bool b_passJetTrigger = passJetTrigger(runNumber);
+//    if (!b_passJetTrigger) return EL::StatusCode::SUCCESS;
 
     // fix weight
     float weight = in_weight;
-    if (m_isMC && m_applyFinalWeight) weight = weight / m_sumOfWeights;
-    out_weight = in_weight;
+    if (m_mc && m_applyFinalWeight) weight = weight / m_sumOfWeights;
+    out_weight = weight;
 
     // get final variables
     TLorentzVector tlv1, tlv2;
@@ -136,9 +137,15 @@ EL::StatusCode DSMP_MTtoTT::execute() {
         tlv1.SetPtEtaPhiE(in_ptj->at(0), in_etaj->at(0), in_phij->at(0), in_Ej->at(0));
         tlv2.SetPtEtaPhiE(in_ptj->at(1), in_etaj->at(1), in_phij->at(1), in_Ej->at(1));
     }
+/* 
     if (m_doFatJets && in_nJ >= 2) {
         tlv1.SetPtEtaPhiM(in_ptJ->at(0), in_etaJ->at(0), in_phiJ->at(0), in_mJ->at(0));
         tlv2.SetPtEtaPhiM(in_ptJ->at(1), in_etaJ->at(1), in_phiJ->at(1), in_mJ->at(1));
+    }
+*/
+    if (m_doFatJets && in_nJ >= 2) {
+        tlv1.SetPtEtaPhiM(in_ptJ->at(0), in_etaJ->at(0), in_phiJ->at(0), in_mJ->at(0) / 1000.);
+        tlv2.SetPtEtaPhiM(in_ptJ->at(1), in_etaJ->at(1), in_phiJ->at(1), in_mJ->at(1) / 1000.);
     }
     out_m1 = tlv1.M();
     out_pt1 = tlv1.Pt();
@@ -150,7 +157,7 @@ EL::StatusCode DSMP_MTtoTT::execute() {
 
     // set category
     if (out_m1 < 50. && out_m2 < 50.) 
-        out_category = _control;
+        out_category = _qq;
     if (out_m1 > 50. && out_m1 < 100. && out_m2 > 50. && out_m2 < 100.)
         out_category = _VV;
     if ((out_m1 > 50. && out_m1 < 100. && out_m2 > 100. && out_m2 < 140.) ||
@@ -166,6 +173,26 @@ EL::StatusCode DSMP_MTtoTT::execute() {
         out_category = _tH;
     if (out_m1 > 140. && out_m1 < 200. && out_m2 > 140. && out_m2 < 200.)
         out_category = _tt;
+    if ((out_m1 < 50. && out_m2 > 50. && out_m2 < 100.) ||
+        (out_m1 > 50. && out_m1 < 100. && out_m2 < 50.))
+        out_category = _qV;
+    if ((out_m1 < 50. && out_m2 > 100. && out_m2 < 140.) ||
+        (out_m1 > 100. && out_m1 < 140. && out_m2 < 50.))
+        out_category = _qH;
+    if ((out_m1 < 50. && out_m2 > 140. && out_m2 < 200.) ||
+        (out_m1 > 140. && out_m1 < 200. && out_m2 < 50.))
+        out_category = _qt;
+    if ((out_m1 > 200. && out_m2 > 50. && out_m2 < 100.) ||
+        (out_m1 > 50. && out_m1 < 100. && out_m2 > 200.))
+        out_category = _QV;
+    if ((out_m1 > 200. && out_m2 > 100. && out_m2 < 140.) ||
+        (out_m1 > 100. && out_m1 < 140. && out_m2 < 200.))
+        out_category = _QH;
+    if ((out_m1 > 200. && out_m2 > 140. && out_m2 < 200.) ||
+        (out_m1 > 140. && out_m1 < 200. && out_m2 > 200.))
+        out_category = _Qt;
+    if (out_m1 > 200. && out_m2 > 200.)
+        out_category = _QQ;
     
     m_outTree->Fill();
 
@@ -189,7 +216,7 @@ void DSMP_MTtoTT::initializeInTree() {
     wk()->tree()->SetBranchAddress("eventNumber", &in_eventNumber);
     wk()->tree()->SetBranchAddress("lumiBlock", &in_lumiblock);
     wk()->tree()->SetBranchAddress("weight", &in_weight);
-    wk()->tree()->SetBranchAddress("passedTriggers", &in_passedTriggers);
+//    wk()->tree()->SetBranchAddress("passedTriggers", &in_passedTriggers);
     if (m_doJets) {
         wk()->tree()->SetBranchAddress("njets", &in_nj);
         wk()->tree()->SetBranchAddress("jet_E", &in_Ej);
@@ -199,7 +226,7 @@ void DSMP_MTtoTT::initializeInTree() {
     }
     if (m_doFatJets) {
         wk()->tree()->SetBranchAddress("nfatjet", &in_nJ);
-        wk()->tree()->SetBranchAddress("fatjet_m", &in_mJ);
+        wk()->tree()->SetBranchAddress("fatjet_tam_cal", &in_mJ);
         wk()->tree()->SetBranchAddress("fatjet_pt", &in_ptJ);
         wk()->tree()->SetBranchAddress("fatjet_eta", &in_etaJ);
         wk()->tree()->SetBranchAddress("fatjet_phi", &in_phiJ);
