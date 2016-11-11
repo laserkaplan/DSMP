@@ -22,12 +22,12 @@ if args.is_MC:
 else:
     jet_calibSeq = "JetArea_Residual_Origin_EtaJES_GSC_JMS_Insitu"
 
-saveJets = False
-saveFatJets = True
+saveJets = True
+saveFatJets = False
 
 c.setalg("BasicEventSelection", { "m_name"                  : "BasicEventSelection",
                                   "m_debug"                 : False,
-                                  "m_derivationName"        : "EXOT8Kernel",
+                                  "m_derivationName"        : "JETM6Kernel",
                                   "m_applyGRLCut"           : False,
                                   "m_doPUreweighting"       : False,
                                   "m_vertexContainerName"   : "PrimaryVertices",
