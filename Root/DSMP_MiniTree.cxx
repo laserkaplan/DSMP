@@ -15,7 +15,7 @@ void DSMP_MiniTree::AddJetsUser(const std::string, const std::string) {
     m_tree->Branch("jet_tam_cal", &m_jet_tam_cal);
 }
 
-void DSMP_MiniTree::AddFatJetsUser(const std::string &, const std::string &, const std::string &) {
+void DSMP_MiniTree::AddFatJetsUser(const std::string, const std::string, const std::string) {
     m_tree->Branch("fatjet_tam", &m_fatjet_tam);
     m_tree->Branch("fatjet_tam_cal", &m_fatjet_tam_cal);
 }
@@ -29,7 +29,7 @@ void DSMP_MiniTree::FillJetsUser(const xAOD::Jet *jet, const std::string) {
     if (jet->isAvailable<float>("JetTrackAssistedMassCalibrated")) m_jet_tam_cal.push_back(jet->getAttribute<float>("JetTrackAssistedMassCalibrated") / 1000.);
 }
 
-void DSMP_MiniTree::FillFatJetsUser(const xAOD::Jet *fatjet, const std::string &, const std::string &) {
+void DSMP_MiniTree::FillFatJetsUser(const xAOD::Jet *fatjet, const std::string, const std::string) {
     if (fatjet->isAvailable<float>("JetTrackAssistedMassUnCalibrated")) m_fatjet_tam.push_back(fatjet->getAttribute<float>("JetTrackAssistedMassUnCalibrated") / 1000.);
     if (fatjet->isAvailable<float>("JetTrackAssistedMassCalibrated")) m_fatjet_tam_cal.push_back(fatjet->getAttribute<float>("JetTrackAssistedMassCalibrated") / 1000.);
 }
@@ -43,7 +43,7 @@ void DSMP_MiniTree::ClearJetsUser(const std::string) {
     m_jet_tam_cal.clear();
 }
 
-void DSMP_MiniTree::ClearFatJetsUser(const std::string &, const std::string &) {
+void DSMP_MiniTree::ClearFatJetsUser(const std::string, const std::string) {
     m_fatjet_tam.clear();
     m_fatjet_tam_cal.clear();
 }
