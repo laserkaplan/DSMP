@@ -17,17 +17,29 @@ triggersList = [
 ]
 triggers = ",".join(triggersList)
 
+deriv = ''
+if args.use_inputFileList:
+    inputstring = str.split((args.input_filename)[0], ".")
+    deriv = inputstring[-2]
+    deriv += "Kernel"
+    if ("JETM" not in deriv and "EXOT" not in deriv):
+        raise Exception("Invalid file list name!  Must be of form <name>.<derivation>.list")
+else:
+    deriv = 'EXOT188Kernel'
+
+print(deriv)
+
 if args.is_MC:
     jet_calibSeq = "JetArea_Residual_Origin_EtaJES_GSC_JMS"
 else:
     jet_calibSeq = "JetArea_Residual_Origin_EtaJES_GSC_JMS_Insitu"
 
-saveJets = True
-saveFatJets = False
+saveJets = False
+saveFatJets = True
 
 c.setalg("BasicEventSelection", { "m_name"                  : "BasicEventSelection",
                                   "m_debug"                 : False,
-                                  "m_derivationName"        : "JETM6Kernel",
+                                  "m_derivationName"        : deriv,
                                   "m_applyGRLCut"           : False,
                                   "m_doPUreweighting"       : False,
                                   "m_vertexContainerName"   : "PrimaryVertices",
